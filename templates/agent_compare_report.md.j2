@@ -1,0 +1,90 @@
+# {{ summary.title or "Coding Agent Comparison" }}
+
+- Generated at: {{ summary.generated_at }}
+- Tasks: {{ summary.task_count }}
+- Repeats: {{ summary.repeats }}
+- Total runs: {{ summary.total_runs }}
+- Overall pass rate: {{ "%.1f%%"|format(summary.overall_pass_rate * 100) }}
+{% if summary.get("cctrace") -%}
+- cctrace: {{ "enabled" if summary.cctrace.enabled else "disabled" }}{% if summary.cctrace.enabled %} (captured {{ summary.cctrace.captured_runs }}/{{ summary.total_runs }} run(s)){% endif %}
+{% endif %}
+
+{% if summary.get("claude_gateway") -%}
+## Claude Code Gateway
+
+- URL: `{{ summary.claude_gateway.url }}`
+- API format: {{ summary.claude_gateway.api_format }}
+- Auth mode: `{{ summary.claude_gateway.auth_mode }}`
+- Model discovery: {{ "enabled" if summary.claude_gateway.model_discovery else "disabled" }}
+
+{% endif -%}
+
+## Target Summary
+
+| Target | Agent | Runs | Pass Rate | Cost | Cost / Pass | Input Tokens | Cached Input | Output Tokens | Agent Failures | Verify Failures | Avg Agent Time |
+|---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+{% for target in summary.targets -%}
+{% set stats = summary.targets_summary[target.name] -%}
+| {{ target.name }} | `{{ target.agent }}` | {{ stats.runs }} | {{ "%.1f%%"|format(stats.pass_rate * 100) }} | {{ "%.8f"|format(stats.estimated_cost) if stats.estimated_cost is not none else "n/a" }} | {{ "%.8f"|format(stats.cost_per_pass) if stats.cost_per_pass is not none else "n/a" }} | {{ stats.usage.input_tokens }} | {{ stats.usage.cached_input_tokens }} | {{ stats.usage.output_tokens }} | {{ stats.agent_failures }} | {{ stats.verify_failures }} | {{ stats.avg_agent_duration_seconds if stats.avg_agent_duration_seconds is not none else "n/a" }} |
+{% endfor %}
+
+## Paired Task Deltas
+
+| Task | Max Pass-Rate Delta | Target Pass Rates |
+|---|---:|---|
+{% for delta in summary.paired_task_deltas -%}
+| {{ delta.task_id }} | {{ "%.1f%%"|format(delta.max_delta * 100) }} | {% for name, rate in delta.target_pass_rates.items() %}`{{ name }}` {{ "%.1f%%"|format(rate * 100) }}{% if not loop.last %}, {% endif %}{% endfor %} |
+{% endfor %}
+
+## Task Summary
+
+| Task | Runs | Pass Rate | Agent Failures | Verify Failures |
+|---|---:|---:|---:|---:|
+{% for task_id, task in summary.tasks_summary.items() -%}
+| {{ task_id }} | {{ task.runs }} | {{ "%.1f%%"|format(task.pass_rate * 100) }} | {{ task.agent_failures }} | {{ task.verify_failures }} |
+{% endfor %}
+
+{% if summary.get("cctrace") and summary.cctrace.enabled -%}
+## cctrace Evidence
+
+| Target | Task | Run | Session | Events | Path |
+|---|---|---:|---|---:|---|
+{% for result in results -%}
+| {{ result.target }} | {{ result.task_id }} | {{ result.repeat_index }} | {{ result.cctrace_session_id or "n/a" }} | {{ result.cctrace_event_count if result.cctrace_event_count is not none else "n/a" }} | `{{ result.cctrace_session_path or result.cctrace_error or "n/a" }}` |
+{% endfor %}
+
+{% endif -%}
+
+## Target Commands
+
+| Target | Command |
+|---|---|
+{% for target in summary.targets -%}
+| {{ target.name }} | `{{ target.command | join(" ") }}` |
+{% endfor %}
+
+## Failure Samples
+
+{% if failures -%}
+{% for failure in failures -%}
+### {{ failure.target }} / {{ failure.task_id }} / run {{ failure.repeat_index }}
+
+- Agent: `{{ failure.agent }}`
+- Error: {{ failure.error or "none" }}
+- Workspace: `{{ failure.workspace }}`
+- Patch: `{{ failure.patch_path }}`
+- Stdout: `{{ failure.stdout_path }}`
+- Stderr: `{{ failure.stderr_path }}`
+- Changed files: {{ failure.changed_files | join(", ") if failure.changed_files else "none" }}
+
+{% endfor -%}
+{% else -%}
+No failures captured.
+{% endif %}
+
+## Interpretation Notes
+
+- The primary quality signal is executable task success, not text similarity.
+- `agent_failures` usually indicate CLI/auth/runtime issues. `verify_failures` mean the agent completed but the produced patch failed the task verifier.
+- Run at least several tasks and repeats before drawing procurement or production conclusions.
+- Subscription-backed agents can be good baselines for coding quality, but they do not expose the same token, model metadata, and transport evidence as API runs.

@@ -1,0 +1,68 @@
+# Codex Official vs Gateway Comparison
+
+- Generated at: {{ summary.generated_at }}
+- Tasks: {{ summary.task_count }}
+- Repeats: {{ summary.repeats }}
+- Total runs: {{ summary.total_runs }}
+- Overall pass rate: {{ "%.1f%%"|format(summary.overall_pass_rate * 100) }}
+{% if summary.pricing_note -%}
+- Pricing note: {{ summary.pricing_note }}
+{% endif %}
+
+## Pricing Comparison
+
+{% if summary.pricing_comparison -%}
+| Official Cost | Gateway Cost | Delta | Delta % | Gateway / Official |
+|---:|---:|---:|---:|---:|
+| {{ "%.8f"|format(summary.pricing_comparison.official_estimated_cost) }} {{ summary.pricing_comparison.currency }} | {{ "%.8f"|format(summary.pricing_comparison.gateway_estimated_cost) }} {{ summary.pricing_comparison.currency }} | {{ "%.8f"|format(summary.pricing_comparison.absolute_delta) }} {{ summary.pricing_comparison.currency }} | {{ "%.2f%%"|format(summary.pricing_comparison.percent_delta) if summary.pricing_comparison.percent_delta is not none else "n/a" }} | {{ summary.pricing_comparison.gateway_to_official_ratio if summary.pricing_comparison.gateway_to_official_ratio is not none else "n/a" }} |
+{% else -%}
+Pricing comparison is unavailable because token usage or one side's pricing was not provided.
+{% endif %}
+
+## Target Summary
+
+| Target | Profile/Mode | Runs | Pass Rate | Cost | Cost / Pass | Input Tokens | Cached Input | Output Tokens | Codex Failures | Verify Failures |
+|---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+{% for target in summary.targets -%}
+{% set stats = summary.targets_summary[target.name] -%}
+| {{ target.name }} | `{{ target.profile or "current config + CLI overrides" }}` | {{ stats.runs }} | {{ "%.1f%%"|format(stats.pass_rate * 100) }} | {{ "%.8f"|format(stats.estimated_cost) if stats.estimated_cost is not none else "n/a" }} | {{ "%.8f"|format(stats.cost_per_pass) if stats.cost_per_pass is not none else "n/a" }} | {{ stats.usage.input_tokens }} | {{ stats.usage.cached_input_tokens }} | {{ stats.usage.output_tokens }} | {{ stats.codex_failures }} | {{ stats.verify_failures }} |
+{% endfor %}
+
+## Paired Task Deltas
+
+| Task | Max Pass-Rate Delta | Target Pass Rates |
+|---|---:|---|
+{% for delta in summary.paired_task_deltas -%}
+| {{ delta.task_id }} | {{ "%.1f%%"|format(delta.max_delta * 100) }} | {% for name, rate in delta.target_pass_rates.items() %}`{{ name }}` {{ "%.1f%%"|format(rate * 100) }}{% if not loop.last %}, {% endif %}{% endfor %} |
+{% endfor %}
+
+## Task Summary
+
+| Task | Runs | Pass Rate | Codex Failures | Verify Failures |
+|---|---:|---:|---:|---:|
+{% for task_id, task in summary.tasks_summary.items() -%}
+| {{ task_id }} | {{ task.runs }} | {{ "%.1f%%"|format(task.pass_rate * 100) }} | {{ task.codex_failures }} | {{ task.verify_failures }} |
+{% endfor %}
+
+## Failure Samples
+
+{% if failures -%}
+{% for failure in failures -%}
+### {{ failure.target }} / {{ failure.task_id }} / run {{ failure.repeat_index }}
+
+- Error: {{ failure.error or "none" }}
+- Workspace: `{{ failure.workspace }}`
+- Patch: `{{ failure.patch_path }}`
+- Changed files: {{ failure.changed_files | join(", ") if failure.changed_files else "none" }}
+
+{% endfor -%}
+{% else -%}
+No failures captured.
+{% endif %}
+
+## Interpretation Notes
+
+- The key model-authenticity signal is paired performance: the same Codex shell, same task repo, same prompt, same verification script, different provider profile.
+- A single task is not enough evidence. Treat persistent gateway underperformance across repeated tasks as a strong anomaly signal.
+- `codex_failures` usually indicate agent/API/runtime problems. `verify_failures` indicate Codex completed but the produced patch did not satisfy the task.
+- Inspect `patch.diff`, `codex-events.jsonl`, `verify-stdout.txt`, and `verify-stderr.txt` inside each workspace for forensic evidence.

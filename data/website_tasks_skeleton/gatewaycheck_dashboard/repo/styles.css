@@ -1,0 +1,31 @@
+:root {
+  --ink: #172026;
+  --muted: #62717b;
+  --page: #f4f7f6;
+  --panel: #ffffff;
+  --line: #d7e1df;
+  --good: #147d3f;
+  --bad: #b3261e;
+  --warn: #9a5c00;
+  --teal: #08746b;
+  --blue: #27618a;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  color: var(--ink);
+  background: var(--page);
+  font: 14px/1.55 system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+button,
+input,
+select {
+  font: inherit;
+}
+
+/* TODO: finish the dashboard layout, scorecards, controls, table, and responsive states. */

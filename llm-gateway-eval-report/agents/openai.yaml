@@ -1,0 +1,4 @@
+interface:
+  display_name: "LLM Gateway Eval Report"
+  short_description: "Run LLM gateway evaluations and generate Chinese HTML reports."
+  default_prompt: "Evaluate an LLM gateway against an official baseline and generate a Chinese HTML report."

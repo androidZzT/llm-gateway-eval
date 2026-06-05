@@ -1,0 +1,258 @@
+# {{ summary.title or "Large Model Gateway Evaluation Report" }}
+
+{% if summary.get("config_path") -%}
+- Config: `{{ summary.config_path }}`
+- Cases: `{{ summary.cases_path }}`
+{% endif -%}
+- Total results: {{ summary.total_results }}
+- Total estimated cost: {{ "%.8f"|format(summary.total_cost) }} {{ summary.currency }}
+
+{% if summary.get("quick_eval") -%}
+## Quick Eval Scope
+
+- Gateway: `{{ summary.quick_eval.gateway_url }}`
+- Model: `{{ summary.quick_eval.model }}`
+- Official baseline: {{ "enabled" if summary.quick_eval.official_baseline_enabled else "not configured" }}
+- Scope: {{ summary.quick_eval.report_scope }}
+{% endif -%}
+
+{% if summary.get("audit") -%}
+## Transport and Privacy Configuration Audit
+
+- Audit artifact: `{{ summary.audit_path }}`
+- Findings: {{ summary.audit.get("PASS", 0) }} PASS, {{ summary.audit.get("WARN", 0) }} WARN, {{ summary.audit.get("FAIL", 0) }} FAIL
+
+| Target | Check | Status | Evidence |
+|---|---|---:|---|
+{% for finding in summary.get("audit_findings", []) -%}
+| {{ finding.target }} | {{ finding.check }} | {{ finding.status }} | {{ finding.evidence or finding.message }} |
+{% endfor %}
+
+{% endif -%}
+
+{% if summary.get("security_analysis") -%}
+## Tamper and Canary Analysis
+
+{% set external_honeytoken_count = summary.security_analysis.get("external_honeytoken_event_count") -%}
+- Probe run: {{ summary.security_analysis.generated_probe_run_id or "not generated" }}
+- Probe artifact: `{{ summary.security_probes_path or "n/a" }}`
+- Dynamic probe pass rate: {{ "%.1f%%"|format(summary.security_analysis.generated_probe_pass_rate * 100) if summary.security_analysis.generated_probe_pass_rate is not none else "n/a" }}
+- Canary leakage events: {{ summary.security_analysis.canary_leakage_event_count }}
+- Tamper probe failures: {{ summary.security_analysis.tamper_probe_failure_count }}
+- Usage anomalies: {{ summary.security_analysis.usage_anomaly_count }}
+- Model mismatches: {{ summary.security_analysis.model_mismatch_count }}
+- External honeytokens: {{ summary.security_analysis.get("honeytoken_count", 0) }}
+- External honeytoken hits: {{ "not checked" if external_honeytoken_count is none else external_honeytoken_count }}
+{% if summary.honeytoken_events_path is defined -%}
+- Honeytoken event artifact: `{{ summary.honeytoken_events_path }}`
+{% endif -%}
+
+{% if summary.security_analysis.usage_anomalies -%}
+### Usage Anomalies
+
+| Provider | Case | Run | Official Input | Provider Input | Ratio |
+|---|---|---:|---:|---:|---:|
+{% for item in summary.security_analysis.usage_anomalies -%}
+| {{ item.provider }} | {{ item.case_id }} | {{ item.repeat_index }} | {{ item.official_input_tokens }} | {{ item.provider_input_tokens }} | {{ item.ratio }} |
+{% endfor %}
+
+{% endif -%}
+{% if summary.security_analysis.canary_leakage_events -%}
+### Canary Leakage Events
+
+| Provider | Case | Run | Assertion |
+|---|---|---:|---|
+{% for item in summary.security_analysis.canary_leakage_events -%}
+| {{ item.provider }} | {{ item.case_id }} | {{ item.repeat_index }} | {{ item.assertion_type }} |
+{% endfor %}
+
+{% endif -%}
+{% if summary.security_analysis.external_honeytoken_events -%}
+### External Honeytoken Hits
+
+| Token | Kind | Event | Excerpt |
+|---|---|---:|---|
+{% for item in summary.security_analysis.external_honeytoken_events -%}
+| {{ item.token_id }} | {{ item.kind }} | {{ item.event_index }} | {{ item.event_excerpt }} |
+{% endfor %}
+
+{% endif -%}
+{% endif -%}
+
+{% if summary.get("usage_billing_analysis") -%}
+## Usage and Billing Accuracy
+
+- Checked results: {{ summary.usage_billing_analysis.checked_result_count }}
+- Official-paired comparisons: {{ summary.usage_billing_analysis.paired_comparison_count }}
+- Paired usage discrepancies: {{ summary.usage_billing_analysis.paired_usage_discrepancy_count }}
+- Total-token consistency issues: {{ summary.usage_billing_analysis.total_consistency_issue_count }}
+- Rough estimate anomalies: {{ summary.usage_billing_analysis.rough_estimate_anomaly_count }}
+
+| Provider | Usage Complete | Input Tokens | Output Tokens | Total Tokens | Input/Rough Estimate | Total Consistency Issues |
+|---|---:|---:|---:|---:|---:|---:|
+{% for name, usage in summary.usage_billing_analysis.provider_usage.items() -%}
+| {{ name }} | {{ "%.1f%%"|format(usage.usage_complete_rate * 100) }} | {{ usage.reported_input_tokens }} | {{ usage.reported_output_tokens }} | {{ usage.reported_total_tokens }} | {{ usage.reported_input_to_rough_estimate_ratio if usage.reported_input_to_rough_estimate_ratio is not none else "n/a" }} | {{ usage.total_consistency_issue_count }} |
+{% endfor %}
+
+{% if summary.usage_billing_analysis.paired_usage_discrepancies -%}
+### Paired Usage Discrepancies
+
+| Provider | Case | Run | Field | Official | Provider | Ratio | Signal |
+|---|---|---:|---|---:|---:|---:|---|
+{% for item in summary.usage_billing_analysis.paired_usage_discrepancies -%}
+| {{ item.provider }} | {{ item.case_id }} | {{ item.repeat_index }} | {{ item.field }} | {{ item.official_value }} | {{ item.provider_value }} | {{ item.ratio if item.ratio is not none else "n/a" }} | {{ item.signal }} |
+{% endfor %}
+
+{% endif -%}
+{% if summary.usage_billing_analysis.total_consistency_issues -%}
+### Total Token Consistency Issues
+
+| Provider | Case | Run | Input | Output | Total | Expected | Delta |
+|---|---|---:|---:|---:|---:|---:|---:|
+{% for item in summary.usage_billing_analysis.total_consistency_issues -%}
+| {{ item.provider }} | {{ item.case_id }} | {{ item.repeat_index }} | {{ item.input_tokens }} | {{ item.output_tokens }} | {{ item.total_tokens }} | {{ item.expected_total_tokens }} | {{ item.delta }} |
+{% endfor %}
+
+{% endif -%}
+{% endif -%}
+
+{% if summary.get("routing_degradation_analysis") -%}
+## Routing and Degradation Signals
+
+- Risk level: {{ summary.routing_degradation_analysis.risk_level }}
+- Strong signals: {{ summary.routing_degradation_analysis.strong_signal_count }}
+- Medium signals: {{ summary.routing_degradation_analysis.medium_signal_count }}
+- Model variant events: {{ summary.routing_degradation_analysis.model_variant_event_count }}
+- Quality gap events: {{ summary.routing_degradation_analysis.quality_gap_event_count }}
+- Input usage variation events: {{ summary.routing_degradation_analysis.input_usage_variation_event_count }}
+- Pass/fail flap events: {{ summary.routing_degradation_analysis.pass_flap_event_count }}
+- Output drift events: {{ summary.routing_degradation_analysis.output_drift_event_count }}
+- Authenticity failure events: {{ summary.routing_degradation_analysis.authenticity_failure_event_count }}
+
+{% if summary.routing_degradation_analysis.model_variant_events -%}
+### Model Variant Events
+
+| Provider | Requested Models | Response Models | Mismatches |
+|---|---|---|---:|
+{% for item in summary.routing_degradation_analysis.model_variant_events -%}
+| {{ item.provider }} | {{ item.requested_models }} | {{ item.response_models }} | {{ item.mismatch_count }} |
+{% endfor %}
+
+{% endif -%}
+{% if summary.routing_degradation_analysis.quality_gap_events -%}
+### Quality Gap Events
+
+| Provider | Case | Official Pass | Provider Pass | Gap |
+|---|---|---:|---:|---:|
+{% for item in summary.routing_degradation_analysis.quality_gap_events -%}
+| {{ item.provider }} | {{ item.case_id }} | {{ "%.1f%%"|format(item.official_pass_rate * 100) }} | {{ "%.1f%%"|format(item.provider_pass_rate * 100) }} | {{ "%.1f%%"|format(item.gap * 100) }} |
+{% endfor %}
+
+{% endif -%}
+{% if summary.routing_degradation_analysis.input_usage_variation_events -%}
+### Input Usage Variation Events
+
+| Provider | Case | Min Input | Max Input | Ratio |
+|---|---|---:|---:|---:|
+{% for item in summary.routing_degradation_analysis.input_usage_variation_events -%}
+| {{ item.provider }} | {{ item.case_id }} | {{ item.min_input_tokens }} | {{ item.max_input_tokens }} | {{ item.ratio }} |
+{% endfor %}
+
+{% endif -%}
+{% if summary.routing_degradation_analysis.pass_flap_events -%}
+### Pass/Fail Flap Events
+
+| Provider | Case | Pass Count | Results | Pass Rate |
+|---|---|---:|---:|---:|
+{% for item in summary.routing_degradation_analysis.pass_flap_events -%}
+| {{ item.provider }} | {{ item.case_id }} | {{ item.pass_count }} | {{ item.result_count }} | {{ "%.1f%%"|format(item.pass_rate * 100) }} |
+{% endfor %}
+
+{% endif -%}
+{% endif -%}
+
+## Core Gateway Questions
+
+| Provider | Model Authenticity Probe | Model Name Mismatch | Security/Privacy Pass | Network Errors | Model Invocation Errors |
+|---|---:|---:|---:|---:|---:|
+{% for name, provider in summary.providers.items() -%}
+| {{ name }} | {{ "%.1f%%"|format(provider.model_authenticity_case_pass_rate * 100) if provider.model_authenticity_case_pass_rate is not none else "n/a" }} | {{ provider.model_name_mismatch_count }} | {{ "%.1f%%"|format(provider.security_case_pass_rate * 100) if provider.security_case_pass_rate is not none else "n/a" }} | {{ provider.network_error_count }} | {{ provider.model_invocation_error_count }} |
+{% endfor %}
+
+## Provider Scores
+
+| Provider | Overall | Quality | Reliability | Performance | Cost | Security | Ops |
+|---|---:|---:|---:|---:|---:|---:|---:|
+{% for name, provider in summary.providers.items() -%}
+| {{ name }} | {{ provider.overall_score }} | {{ provider.scores.quality }} | {{ provider.scores.reliability }} | {{ provider.scores.performance }} | {{ provider.scores.cost }} | {{ provider.scores.security_compliance }} | {{ provider.scores.operations }} |
+{% endfor %}
+
+## Provider Metrics
+
+| Provider | Case Pass | Request Success | Errors | P50 Latency | P95 Latency | P99 Latency | Usage Present | JSON Schema Pass | Cost |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+{% for name, provider in summary.providers.items() -%}
+| {{ name }} | {{ "%.1f%%"|format(provider.case_pass_rate * 100) }} | {{ "%.1f%%"|format(provider.request_success_rate * 100) }} | {{ provider.error_count }} | {{ provider.latency.p50 if provider.latency.p50 is not none else "n/a" }} | {{ provider.latency.p95 if provider.latency.p95 is not none else "n/a" }} | {{ provider.latency.p99 if provider.latency.p99 is not none else "n/a" }} | {{ "%.1f%%"|format(provider.usage_present_rate * 100) }} | {{ "%.1f%%"|format(provider.json_schema_pass_rate * 100) if provider.json_schema_pass_rate is not none else "n/a" }} | {{ "%.8f"|format(provider.total_cost) }} |
+{% endfor %}
+
+## Error Breakdown
+
+{% for name, provider in summary.providers.items() -%}
+### {{ name }}
+
+{% if provider.error_types -%}
+| Error Type | Count |
+|---|---:|
+{% for error_type, count in provider.error_types.items() -%}
+| {{ error_type }} | {{ count }} |
+{% endfor %}
+{% else -%}
+No request errors captured.
+{% endif %}
+
+{% endfor %}
+
+## Category Metrics
+
+| Category | Results | Case Pass | Request Success | Assertion Pass |
+|---|---:|---:|---:|---:|
+{% for name, category in summary.categories.items() -%}
+| {{ name }} | {{ category.total }} | {{ "%.1f%%"|format(category.case_pass_rate * 100) }} | {{ "%.1f%%"|format(category.request_success_rate * 100) }} | {{ "%.1f%%"|format(category.assertion_pass_rate * 100) if category.assertion_pass_rate is not none else "n/a" }} |
+{% endfor %}
+
+## Failure Samples
+
+{% if failures -%}
+{% for failure in failures -%}
+### {{ failure.provider }} / {{ failure.case_id }}
+
+- Category: `{{ failure.category }}`
+- Error: {{ failure.error or "none" }}
+- Output:
+
+```text
+{{ failure.output[:1200] }}
+```
+
+Failed assertions:
+{% for assertion in failure.assertion_results if not assertion.passed -%}
+- `{{ assertion.type }}`: {{ assertion.message }}
+{% else -%}
+- n/a
+{% endfor %}
+
+{% endfor -%}
+{% else -%}
+No failures captured in this run.
+{% endif %}
+
+## Interpretation Notes
+
+- Quality is assertion pass rate, falling back to case pass rate when a case has no assertions.
+- Reliability is request success rate before quality assertions.
+- Performance is scored against `run.performance_targets.p95_latency_seconds`.
+- Cost is normalized so the cheapest nonzero provider receives 100.
+- Model authenticity probes are high-confidence mismatch detectors, not cryptographic proof of model identity.
+- Transport security should be checked with `llm-gateway-eval audit --online-tls` before production use.
+- Dynamic canary and tamper probes detect suspicious behavior; they cannot prove a gateway never modifies prompts.
+- Operations is a neutral MVP placeholder until audit, RBAC, rollout, and support evidence are collected.

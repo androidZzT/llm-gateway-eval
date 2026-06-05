@@ -1,0 +1,30 @@
+model,vendor,input_per_million,cached_input_per_million,output_per_million,currency,source_url,notes
+gpt-5.5,OpenAI,5.00,0.50,30.00,USD,https://openai.com/api/pricing/,Standard processing price snapshot checked 2026-06-02.
+gpt-5.4,OpenAI,2.50,0.25,15.00,USD,https://openai.com/api/pricing/,Standard processing price snapshot checked 2026-06-02.
+gpt-5.4-low,OpenAI,2.50,0.25,15.00,USD,https://openai.com/api/pricing/,WeyToken alias priced as gpt-5.4 in this catalog.
+gpt-5.4-mini,OpenAI,0.75,0.075,4.50,USD,https://openai.com/api/pricing/,Standard processing price snapshot checked 2026-06-02.
+gpt-image-2,OpenAI,8.00,2.00,30.00,USD,https://openai.com/api/pricing/,Uses GPT-Image-2 image-token rates; official text input is 5.00 and cached text input is 1.25 per 1M tokens.
+claude-haiku-4-5-20251001,Anthropic,1.00,0.10,5.00,USD,https://docs.anthropic.com/en/docs/about-claude/pricing,Claude Haiku 4.5 base input/cache-hit/output token rates.
+claude-haiku-4-5-20251001-thinking,Anthropic,1.00,0.10,5.00,USD,https://docs.anthropic.com/en/docs/about-claude/pricing,WeyToken thinking alias mapped to Claude Haiku 4.5 pricing.
+claude-opus-4-6,Anthropic,5.00,0.50,25.00,USD,https://docs.anthropic.com/en/docs/about-claude/pricing,Claude Opus 4.6 base input/cache-hit/output token rates.
+claude-opus-4-6-thinking,Anthropic,5.00,0.50,25.00,USD,https://docs.anthropic.com/en/docs/about-claude/pricing,WeyToken thinking alias mapped to Claude Opus 4.6 pricing.
+claude-opus-4-7,Anthropic,5.00,0.50,25.00,USD,https://docs.anthropic.com/en/docs/about-claude/pricing,Claude Opus 4.7 base input/cache-hit/output token rates.
+claude-opus-4-7-thinking,Anthropic,5.00,0.50,25.00,USD,https://docs.anthropic.com/en/docs/about-claude/pricing,WeyToken thinking alias mapped to Claude Opus 4.7 pricing.
+claude-opus-4-8,Anthropic,5.00,0.50,25.00,USD,https://docs.anthropic.com/en/docs/about-claude/pricing,Claude Opus 4.8 base input/cache-hit/output token rates.
+claude-sonnet-4-6,Anthropic,3.00,0.30,15.00,USD,https://docs.anthropic.com/en/docs/about-claude/pricing,Claude Sonnet 4.6 base input/cache-hit/output token rates.
+claude-sonnet-4-6-thinking,Anthropic,3.00,0.30,15.00,USD,https://docs.anthropic.com/en/docs/about-claude/pricing,WeyToken thinking alias mapped to Claude Sonnet 4.6 pricing.
+deepseek-v4-flash,DeepSeek,0.14,0.0028,0.28,USD,https://api-docs.deepseek.com/quick_start/pricing,DeepSeek official table: cache miss input/cache hit input/output.
+deepseek-v4-pro,DeepSeek,0.435,0.003625,0.87,USD,https://api-docs.deepseek.com/quick_start/pricing,DeepSeek official table: cache miss input/cache hit input/output.
+gemini-2.5-flash,Google,0.30,0.03,2.50,USD,https://ai.google.dev/gemini-api/docs/pricing,Standard paid tier; text/image/video input rate, audio input differs.
+gemini-2.5-pro,Google,1.25,0.125,10.00,USD,https://ai.google.dev/gemini-api/docs/pricing,Standard paid tier for prompts <=200k tokens; higher context tier differs.
+gemini-3-flash-preview,Google,0.50,0.05,3.00,USD,https://ai.google.dev/gemini-api/docs/pricing,Standard paid tier; text/image/video input rate, audio input differs.
+gemini-3.1-pro-preview,Google,2.00,0.20,12.00,USD,https://ai.google.dev/gemini-api/docs/pricing,Standard paid tier for prompts <=200k tokens; higher context tier differs.
+gemini-3.5-flash,Google,1.50,0.15,9.00,USD,https://ai.google.dev/gemini-api/docs/pricing,Standard paid tier token rates.
+minimax-m2.1,MiniMax,0.30,0.03,1.20,USD,https://platform.minimax.io/docs/guides/pricing-paygo.md,MiniMax Pay-as-you-go legacy model token rates; cache write price omitted.
+minimax-m2.5,MiniMax,0.30,0.03,1.20,USD,https://platform.minimax.io/docs/guides/pricing-paygo.md,MiniMax Pay-as-you-go legacy model token rates; cache write price omitted.
+qwen3-coder-480b,Alibaba Cloud,6.00,,24.00,CNY,https://help.aliyun.com/zh/model-studio/model-pricing,"Mapped to official qwen3-coder-480b-a35b-instruct, 中国内地, 0<Token<=32K tier."
+qwen3.5-plus,Alibaba Cloud,0.80,,4.80,CNY,https://help.aliyun.com/zh/model-studio/model-pricing,"中国内地, 0<Token<=128K tier; non-thinking and thinking output are both listed as 4.80."
+qwen3-reranker-8b,Alibaba Cloud,0.50,,0.00,CNY,https://help.aliyun.com/zh/model-studio/model-pricing,"Mapped to official qwen3-rerank text rerank model; output is not billed."
+qwen3-embedding-4b,Alibaba Cloud,0.50,,0.00,CNY,https://help.aliyun.com/zh/model-studio/model-pricing,"Mapped to Alibaba text-embedding-v4; output is not billed."
+qwen3-embedding-8b,Alibaba Cloud,0.50,,0.00,CNY,https://help.aliyun.com/zh/model-studio/model-pricing,"Mapped to Alibaba text-embedding-v4; output is not billed."
+glm-5.1,Zhipu AI,6.00,1.30,24.00,CNY,https://open.bigmodel.cn/pricing,"Official pricing page static app bundle: GLM-5.1, input length [0,32), cache hit 1.30, output 24.00."

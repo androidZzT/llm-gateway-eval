@@ -1,0 +1,1 @@
+{"id":"control_ping_ok","category":"stability","messages":[{"role":"system","content":"Reply with exactly OK."},{"role":"user","content":"ping"}],"assertions":[{"type":"equals","value":"OK"}],"tags":["stability","control"]}
