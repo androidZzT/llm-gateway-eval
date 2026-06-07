@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { width:900px; height:620px; background:#0d1117; color:#e6edf3;
+    font-family:-apple-system,'Segoe UI',Arial,sans-serif; padding:34px 38px; overflow:hidden; }
+  .mono { font-family:'SF Mono','Menlo','Consolas',monospace; }
+  .h { display:flex; align-items:baseline; justify-content:space-between; }
+  .h .t { font-size:24px; font-weight:800; }
+  .h .e { font-size:13px; color:#7d8590; border:1px solid #30363d; border-radius:6px; padding:3px 10px; }
+  .sub { font-size:14px; color:#8b949e; margin-top:7px; }
+  .summary { margin-top:18px; display:flex; gap:10px; }
+  .chip { font-size:13px; font-weight:700; border-radius:7px; padding:5px 12px; }
+  .pass { background:#0f2a1a; color:#3fb950; border:1px solid #1e5234; }
+  .warn { background:#2a2410; color:#d29922; border:1px solid #5a4a1e; }
+  .fail { background:#2a1416; color:#f85149; border:1px solid #5a242a; }
+  table { width:100%; border-collapse:collapse; margin-top:18px; }
+  td { padding:9px 8px; font-size:14px; border-bottom:1px solid #161b22; }
+  .chk { color:#adbac7; font-weight:600; width:200px; }
+  .ev { color:#7d8590; font-size:13px; }
+  .ev .mono { color:#79c0ff; }
+  .st { text-align:right; color:#3fb950; font-weight:700; font-size:13px; width:70px; }
+</style>
+</head>
+<body>
+  <div class="h"><div class="t mono">Transport Audit</div><div class="e">example report</div></div>
+  <div class="sub">Online TLS/transport checks for a non-local endpoint, before any eval cases run.</div>
+  <div class="summary">
+    <span class="chip pass">10 PASS</span><span class="chip warn">0 WARN</span><span class="chip fail">0 FAIL</span>
+  </div>
+  <table>
+    <tr><td class="chk">transport_scheme</td><td class="ev mono">https://gateway.example.com/v1</td><td class="st">PASS</td></tr>
+    <tr><td class="chk">tls_handshake</td><td class="ev mono">TLSv1.3</td><td class="st">PASS</td></tr>
+    <tr><td class="chk">tls_verification</td><td class="ev">hostname + chain verified</td><td class="st">PASS</td></tr>
+    <tr><td class="chk">certificate_expiry</td><td class="ev">valid, &gt; 60 days remaining</td><td class="st">PASS</td></tr>
+    <tr><td class="chk">certificate_issuer</td><td class="ev">public CA</td><td class="st">PASS</td></tr>
+    <tr><td class="chk">certificate_subject</td><td class="ev mono">CN=gateway.example.com</td><td class="st">PASS</td></tr>
+    <tr><td class="chk">certificate_fingerprint</td><td class="ev">SHA-256 recorded</td><td class="st">PASS</td></tr>
+    <tr><td class="chk">dns_resolution</td><td class="ev">resolves to a public IP</td><td class="st">PASS</td></tr>
+    <tr><td class="chk">api_key_storage</td><td class="ev mono">GATEWAY_API_KEY (env)</td><td class="st">PASS</td></tr>
+    <tr><td class="chk">static_secret_headers</td><td class="ev">none configured</td><td class="st">PASS</td></tr>
+  </table>
+</body>
+</html>

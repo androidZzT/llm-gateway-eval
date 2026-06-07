@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { width:900px; height:430px; background:#0d1117; color:#e6edf3;
+    font-family:-apple-system,'Segoe UI',Arial,sans-serif; padding:34px 38px; overflow:hidden; }
+  .mono { font-family:'SF Mono','Menlo','Consolas',monospace; }
+  .h { display:flex; align-items:baseline; justify-content:space-between; }
+  .h .t { font-size:24px; font-weight:800; }
+  .h .e { font-size:13px; color:#7d8590; border:1px solid #30363d; border-radius:6px; padding:3px 10px; }
+  .sub { font-size:14px; color:#8b949e; margin-top:7px; }
+  table { width:100%; border-collapse:collapse; margin-top:22px; }
+  th { text-align:right; font-size:13px; color:#7d8590; font-weight:600; padding:11px 10px; border-bottom:1px solid #21262d; }
+  th:first-child, td:first-child { text-align:left; }
+  td { padding:15px 10px; font-size:16px; border-bottom:1px solid #161b22; }
+  td.prov { font-weight:700; font-size:16px; }
+  td.prov .tag { font-size:11px; color:#7d8590; display:block; font-weight:500; margin-top:2px; }
+  .v { font-weight:700; }
+  .official .overall { color:#58a6ff; }
+  .gateway  .overall { color:#3fb950; }
+  .num { font-variant-numeric:tabular-nums; }
+  .legend { margin-top:24px; font-size:13px; color:#7d8590; line-height:1.5; }
+  .legend b { color:#adbac7; }
+</style>
+</head>
+<body>
+  <div class="h"><div class="t mono">Provider Scores</div><div class="e">example report</div></div>
+  <div class="sub">Weighted 0–100 across six dimensions, normalized so the cheapest non-zero provider scores 100 on Cost.</div>
+  <table>
+    <tr><th>Provider</th><th>Overall</th><th>Quality</th><th>Reliability</th><th>Performance</th><th>Cost</th><th>Security</th><th>Ops</th></tr>
+    <tr class="official">
+      <td class="prov">official<span class="tag">direct baseline</span></td>
+      <td class="v overall num">92.4</td><td class="num">100</td><td class="num">100</td><td class="num">88</td><td class="num">61</td><td class="num">100</td><td class="num">60</td>
+    </tr>
+    <tr class="gateway">
+      <td class="prov">gateway<span class="tag">under test</span></td>
+      <td class="v overall num">90.1</td><td class="num">100</td><td class="num">100</td><td class="num">71</td><td class="num">100</td><td class="num">100</td><td class="num">60</td>
+    </tr>
+  </table>
+  <div class="legend"><b>Read it as:</b> same Quality &amp; Reliability, gateway wins on Cost, trades some Performance (slower P95). Numbers are illustrative — your run writes the real ones to <span class="mono">summary.json</span>.</div>
+</body>
+</html>

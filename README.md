@@ -1,8 +1,32 @@
-# llm-gateway-eval
+<div align="center">
 
-[![Python](https://img.shields.io/badge/python-3.11%2B-blue.svg)](https://www.python.org/)
-[![API](https://img.shields.io/badge/API-OpenAI--compatible-412991.svg)](https://platform.openai.com/docs/api-reference/chat)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+<img src="docs/hero.png" width="760" alt="llm-gateway-eval">
+
+<h1>llm-gateway-eval</h1>
+
+<strong>Put an OpenAI-compatible LLM gateway to the test — with runnable evidence, not ads.</strong>
+
+<p><em>Turn the four worries — model authenticity, data safety, stability, and price — into checks you can run, backed by evidence.</em></p>
+
+<p>
+<a href="https://www.python.org/"><img src="https://img.shields.io/badge/python-3.11%2B-blue?style=flat-square" alt="Python 3.11+"></a>
+<a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-yellow?style=flat-square" alt="License: MIT"></a>
+<a href="https://github.com/androidZzT/llm-gateway-eval"><img src="https://img.shields.io/github/stars/androidZzT/llm-gateway-eval?style=flat-square" alt="GitHub stars"></a>
+<a href="https://platform.openai.com/docs/api-reference/chat"><img src="https://img.shields.io/badge/API-OpenAI--compatible-412991?style=flat-square" alt="OpenAI-compatible API"></a>
+</p>
+
+<p>
+<a href="#installation">Install</a> &bull;
+<a href="#60-second-quickstart">Quickstart</a> &bull;
+<a href="#usage">Usage</a> &bull;
+<a href="#what-it-measures">What it measures</a> &bull;
+<a href="#example-report">Example report</a> &bull;
+<a href="README_CN.md">中文</a>
+</p>
+
+</div>
+
+---
 
 When you hand real code and real money to an OpenAI-compatible gateway, four worries follow you:
 **is the model the one you paid for, is your data safe, is it stable, and is the price honest?**
@@ -19,21 +43,7 @@ stats, and token/cost accuracy, and renders it all into a Markdown report you ca
 | **Is it stable?** | Repeated runs with P50/P95/P99 latency, error classes, retries, and request success rate. |
 | **Is the price honest?** | Token-usage completeness and estimated input/output cost deltas versus the baseline. |
 
-## Table of Contents
-
-- [Installation](#installation)
-- [60-Second Quickstart](#60-second-quickstart)
-- [Usage](#usage)
-  - [Add a direct-provider baseline](#add-a-direct-provider-baseline)
-  - [Out-of-band leakage (honeytokens)](#out-of-band-leakage-honeytokens)
-  - [Full YAML workflow](#full-yaml-workflow)
-  - [Codex and coding-agent comparison](#codex-and-coding-agent-comparison)
-  - [Website task benchmark](#website-task-benchmark)
-- [What It Measures](#what-it-measures)
-- [Case Format](#case-format)
-- [Project Layout](#project-layout)
-- [Notes & Limitations](#notes--limitations)
-- [License](#license)
+---
 
 ## Installation
 
@@ -44,6 +54,8 @@ git clone https://github.com/androidZzT/llm-gateway-eval.git
 cd llm-gateway-eval
 uv sync
 ```
+
+---
 
 ## 60-Second Quickstart
 
@@ -68,6 +80,8 @@ writes:
 
 > Prefer `--gateway-api-key-env GATEWAY_API_KEY` (or `--gateway-api-key-env <YOUR_VAR>`) over
 > passing the raw key on the command line, so secrets stay out of your shell history.
+
+---
 
 ## Usage
 
@@ -245,6 +259,8 @@ This distinction matters because a run can produce a valid website but still tim
 self-checking. Keep screenshots and raw `results.jsonl` as local evidence under `reports/` and
 `runs/`; do not commit them unless you intentionally want to publish the evidence.
 
+---
+
 ## What It Measures
 
 - Model authenticity: response model metadata mismatch, direct-baseline comparison readiness, and high-confidence capability probes tagged `model_authenticity`.
@@ -258,6 +274,26 @@ self-checking. Keep screenshots and raw `results.jsonl` as local evidence under 
 - Routing/degradation: model metadata variants, official-vs-gateway quality gaps, repeated-case input-token variation, pass/fail flaps, and temperature-0 output drift.
 - Compatibility: JSON schema success rate, usage availability, streaming field placeholders.
 - Safety/security coverage: pass rate for cases tagged or categorized as `safety`, `security`, or `privacy`.
+
+---
+
+## Example Report
+
+These screenshots come from one example run. The real numbers in your own report are written into
+each run's `summary.json` and rendered by `report`.
+
+<table>
+  <tr>
+    <td align="center"><strong>Provider scores</strong></td>
+    <td align="center"><strong>Transport audit</strong></td>
+  </tr>
+  <tr>
+    <td><img src="docs/report-scores.png" width="100%"></td>
+    <td><img src="docs/report-audit.png" width="100%"></td>
+  </tr>
+</table>
+
+---
 
 ## Case Format
 
@@ -275,6 +311,8 @@ Supported assertion types:
 - `regex`
 - `json_schema`
 - `refusal_expected`
+
+---
 
 ## Project Layout
 
@@ -296,6 +334,8 @@ ignored by git. Treat those folders as local evidence, not source.
 A bundled Codex skill for the end-to-end workflow lives in `llm-gateway-eval-report/`; copy or
 symlink it into `~/.codex/skills/` to install it locally.
 
+---
+
 ## Notes & Limitations
 
 - Prefer API keys through environment variables (`--gateway-api-key-env`, config `api_key_env`). Avoid committing raw keys or passing them in shell history.
@@ -307,6 +347,8 @@ symlink it into `~/.codex/skills/` to install it locally.
 - Ragas, promptfoo red teaming, k6/Locust, OpenTelemetry, and Langfuse are intentionally left as future extension points.
 
 See [docs/evaluation-methodology.md](docs/evaluation-methodology.md) for the recommended interpretation.
+
+---
 
 ## License
 

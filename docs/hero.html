@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    width:1200px; height:600px; overflow:hidden;
+    background:
+      radial-gradient(900px 420px at 50% -12%, #16233f 0%, rgba(22,35,63,0) 60%),
+      #0d1117;
+    color:#e6edf3;
+    font-family:-apple-system,'Segoe UI','Helvetica Neue',Arial,sans-serif;
+    padding:54px 64px;
+    display:flex; flex-direction:column;
+  }
+  .mono { font-family:'SF Mono','Menlo','Consolas',monospace; }
+  .top { display:flex; align-items:baseline; gap:16px; }
+  .name { font-size:42px; font-weight:800; letter-spacing:-0.01em; }
+  .name .g { color:#3fb950; }
+  .pill { font-size:13px; color:#8b949e; border:1px solid #30363d; border-radius:999px; padding:4px 12px; }
+  .tag { font-size:21px; color:#adbac7; margin-top:14px; font-weight:500; line-height:1.4; }
+  .tag b { color:#e6edf3; font-weight:700; }
+  .grid { margin-top:30px; display:grid; grid-template-columns:1fr 1fr; gap:14px; flex:1; }
+  .row { display:flex; align-items:center; gap:16px; background:#11161d; border:1px solid #21262d; border-radius:12px; padding:16px 18px; }
+  .worry { flex:0 0 230px; }
+  .q { font-size:17px; font-weight:700; color:#e6edf3; }
+  .qs { font-size:12.5px; color:#7d8590; margin-top:3px; }
+  .arrow { color:#3fb950; font-size:20px; flex:0 0 auto; }
+  .check { flex:1; font-size:14px; color:#adbac7; line-height:1.4; }
+  .check .mono { color:#79c0ff; font-size:12.5px; }
+  .num { width:26px; height:26px; flex:0 0 26px; border-radius:7px; background:#16233f; color:#58a6ff; font-weight:800; font-size:14px; display:flex; align-items:center; justify-content:center; }
+  .foot { margin-top:26px; display:flex; align-items:center; gap:18px; font-size:13px; color:#7d8590; }
+  .foot .dot { color:#30363d; }
+  .foot b { color:#adbac7; font-weight:600; }
+</style>
+</head>
+<body>
+  <div class="top">
+    <div class="name mono">llm-gateway-<span class="g">eval</span></div>
+    <span class="pill">OpenAI-compatible</span>
+  </div>
+  <div class="tag">Put an LLM gateway to the test — with <b>runnable evidence</b>, not ads.</div>
+
+  <div class="grid">
+    <div class="row">
+      <span class="num">1</span>
+      <div class="worry"><div class="q">Is the model swapped?</div><div class="qs">paying for gpt-5.5, getting it?</div></div>
+      <span class="arrow">→</span>
+      <div class="check">authenticity probes + <span class="mono">model</span> metadata vs an official baseline</div>
+    </div>
+    <div class="row">
+      <span class="num">2</span>
+      <div class="worry"><div class="q">Is my data safe?</div><div class="qs">code, prompts, keys</div></div>
+      <span class="arrow">→</span>
+      <div class="check">TLS/cert audit + out-of-band honeytokens + redaction</div>
+    </div>
+    <div class="row">
+      <span class="num">3</span>
+      <div class="worry"><div class="q">Is it stable?</div><div class="qs">timeouts, rate limits</div></div>
+      <span class="arrow">→</span>
+      <div class="check">repeated runs, <span class="mono">P50/P95/P99</span>, error classes, success rate</div>
+    </div>
+    <div class="row">
+      <span class="num">4</span>
+      <div class="worry"><div class="q">Is the price honest?</div><div class="qs">cheaper, but where?</div></div>
+      <span class="arrow">→</span>
+      <div class="check">token-usage completeness + input/output cost deltas</div>
+    </div>
+  </div>
+
+  <div class="foot">
+    <span>Four worries, turned into <b>evidence-backed checks</b> + a Markdown report.</span>
+    <span class="dot">•</span><span class="mono">Python 3.11+</span>
+    <span class="dot">•</span><span class="mono">MIT</span>
+  </div>
+</body>
+</html>
